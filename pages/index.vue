@@ -5,9 +5,9 @@
       :key="home.objectID"
       style="float: left; margin: 10px"
     >
-      <nuxt-link :to="{ name: 'home-id', params: { id: home.objectID } }"
-        ><HomeCard :home="home"></HomeCard
-      ></nuxt-link>
+      <nuxt-link :to="{ name: 'home-id', params: { id: home.objectID } }">
+        <HomeCard :home="home" />
+      </nuxt-link>
     </div>
   </div>
 </template>

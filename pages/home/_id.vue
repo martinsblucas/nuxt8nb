@@ -23,6 +23,8 @@
       <br />
       {{ home.guests }} guests, {{ home.bedrooms }} rooms, {{ home.beds }} beds,
       {{ home.bathrooms }} bath<br />
+
+      <div style="width: 800px; height: 800px" ref="map"></div>
     </div>
   </div>
 </template>
@@ -32,12 +34,11 @@ import homes from "~/data/homes";
 
 export default {
   head() {
-    if (this.home)
-      return {
-        title: this.home.title,
-      };
+    const head = {};
 
-    return {}
+    if (this.home) head.title = this.home.title;
+
+    return head;
   },
 
   data: () => ({
@@ -46,8 +47,22 @@ export default {
 
   created() {
     const home = homes.find((home) => home.objectID == this.$route.params.id);
-    if (!home) this.$nuxt.error({message: "This page could not be found", statusCode: 404})
+    if (!home)
+      this.$nuxt.error({
+        message: "This page could not be found",
+        statusCode: 404,
+      });
     else this.home = home;
+  },
+
+  mounted() {
+    if (!this.home || !this.$refs.map || !this.$maps) return;
+    else
+      this.$maps.showMap({
+        canvas: this.$refs.map,
+        lng: this.home._geoloc.lng,
+        lat: this.home._geoloc.lat,
+      });
   },
 };
 </script>
