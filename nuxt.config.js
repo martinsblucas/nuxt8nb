@@ -1,7 +1,7 @@
 export default {
   components: true,
   head: {
-    title: 'Mastering Nuxt',
+    titleTemplate: 'Mastering Nuxt: %s',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -14,10 +14,8 @@ export default {
     // link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
   router: {
-      prefetchLinks: false
+    prefetchLinks: false,
   },
-  plugins: ["~/plugins/maps.client"],
-  modules: [
-    '@nuxtjs/dotenv',
-  ]
+  plugins: ['~/plugins/maps.client', '~/plugins/dataApi'],
+  modules: ['@nuxtjs/dotenv'],
 }

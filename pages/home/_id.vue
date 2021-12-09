@@ -25,14 +25,27 @@
       {{ home.bathrooms }} bath<br />
 
       <div style="width: 800px; height: 800px" ref="map"></div>
+
+      <div v-for="review in reviews" :key="review.objectID">
+        <img :src="review.reviewer.image" /><br />
+        {{ review.reviewer.name }}<br />
+        {{ formatDate(review.date) }}<br />
+        <ShortText :text="review.comment" :target="150" />
+      </div>
+
+      <img :src="user.image" /><br />
+      {{ user.name }}
+      {{ formatDate(user.joined) }}<br />
+      {{ user.reviewCount }}<br />
+      {{ user.description }}
     </div>
   </div>
 </template>
 
 <script>
-import homes from "~/data/homes";
-
+import ShortText from "../../components/ShortText.vue";
 export default {
+  components: { ShortText },
   head() {
     const head = {};
 
@@ -43,26 +56,41 @@ export default {
 
   data: () => ({
     home: null,
+    reviews: [],
+    user: null
   }),
 
-  created() {
-    const home = homes.find((home) => home.objectID == this.$route.params.id);
-    if (!home)
-      this.$nuxt.error({
-        message: "This page could not be found",
-        statusCode: 404,
+  async asyncData({ params, $dataApi, error }) {
+    const responses = await Promise.all([$dataApi.getHome(params.id), $dataApi.getReviewsByHomeId(params.id), await $dataApi.getUserByHomeId(params.id)])
+    const badResponse = responses.find((response) => !response.ok)
+    if(badResponse)
+      return error({
+        statusCode: badResponse.status,
+        message: badResponse.statusText,
       });
-    else this.home = home;
+
+    return { home: responses[0].json, reviews: responses[1].json.hits, user: responses[2].json.hits[0] };
   },
 
   mounted() {
-    if (!this.home || !this.$refs.map || !this.$maps) return;
+    if (!this.home || !this.$refs.map) return;
     else
       this.$maps.showMap({
         canvas: this.$refs.map,
         lng: this.home._geoloc.lng,
         lat: this.home._geoloc.lat,
       });
+  },
+
+  methods: {
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleString(undefined, {
+        month: "long",
+        year: "numeric",
+        day: "numeric",
+      });
+    },
   },
 };
 </script>
