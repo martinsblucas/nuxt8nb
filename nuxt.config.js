@@ -4,7 +4,6 @@ export default {
     titleTemplate: 'Mastering Nuxt: %s',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
@@ -19,4 +18,11 @@ export default {
   plugins: ['~/plugins/maps.client', '~/plugins/dataApi'],
   buildModules: ['@nuxtjs/tailwindcss'],
   modules: ['@nuxtjs/dotenv'],
+  css: ['~/assets/sass/app.scss'],
+  build: {
+    extractCSS: true,
+    loaders: {
+      limit: 0,
+    },
+  },
 }

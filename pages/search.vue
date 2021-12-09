@@ -1,22 +1,25 @@
 <template>
-  <div>
-    Results for {{ label }}
-    <div style="float: right; width: 800px; height: 800px" ref="map"></div>
-    <div v-if="homes.length > 0">
-      <nuxt-link
-        v-for="home in homes"
-        :key="home.objectID"
-        :to="{ name: 'home-id', params: { id: home.objectID } }"
-      >
-        <HomeRow
-          :home="home"
-          @mouseover.native="hightlightMarker(home.objectID, true)"
-          @mouseout.native="hightlightMarker(home.objectID, false)"
-        />
-      </nuxt-link>
-    </div>
+  <div class="app-search-results-page">
+    <div class="app-search-results">
+      <div class="app-search-results-listing">
+        <h2 class="app-title">Stays in {{ label }}</h2>
+        <nuxt-link
+          v-for="home in homes"
+          :key="home.objectID"
+          :to="{ name: 'home-id', params: { id: home.objectID } }"
+        >
+          <HomeRow
+            :home="home"
+            @mouseover.native="hightlightMarker(home.objectID, true)"
+            @mouseout.native="hightlightMarker(home.objectID, false)"
+          />
+        </nuxt-link>
+      </div>
 
-    <div v-else>No results found</div>
+      <div class="app-search-results-map">
+        <div class="app-map" ref="map"></div>
+      </div>
+    </div>
   </div>
 </template>
 
