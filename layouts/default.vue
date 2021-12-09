@@ -11,7 +11,6 @@
 <script>
 export default {
   mounted() {
-    console.log(this.$refs.citySearch);
     this.$maps.makeAutoComplete(this.$refs.citySearch);
   },
 

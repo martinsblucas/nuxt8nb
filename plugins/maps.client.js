@@ -9,7 +9,7 @@ export default function (context, inject) {
 
   inject('maps', {
     showMap,
-    makeAutoComplete
+    makeAutoComplete,
   })
 
   // adds Google Maps library to script tag and set the callback as initGoogleMaps
@@ -21,7 +21,7 @@ export default function (context, inject) {
     document.head.appendChild(script)
   }
 
-  // when Google Maps isLoaded, call each showMap function stored in the waiting array
+  // when Google Maps isLoaded, call each function stored in the waiting array
   function initGoogleMaps() {
     isLoaded = true
     waiting.forEach((map) => {
@@ -30,7 +30,10 @@ export default function (context, inject) {
   }
 
   // each showMap called before isLoaded is added to the waiting array; after isLoaded, render the map
-  function showMap({ canvas, lat, lng }) {
+  function showMap({ canvas, lat, lng, markers }) {
+    if (!markers)
+      markers = []
+
     if (!isLoaded) {
       waiting.push({
         fn: showMap,
@@ -46,13 +49,47 @@ export default function (context, inject) {
       center: new window.google.maps.LatLng(position),
       disableDefaultUI: true,
       zoomControl: true,
+      styles: [
+        {
+          featureType: 'poi.business',
+          elementType: 'labels.icon',
+          stylers: [
+            {
+              visibility: 'off',
+            },
+          ],
+        },
+      ],
     }
 
     const map = new window.google.maps.Map(canvas, mapOptions)
-    const marker = new window.google.maps.Marker({ position })
-    marker.setMap(map)
+
+    if (!markers.length) {
+      const marker = new window.google.maps.Marker({ position })
+      marker.setMap(map)
+      return
+    }
+
+    const bounds = new window.google.maps.LatLngBounds()
+    markers.forEach((home) => {
+      const position = { lat: home.lat, lng: home.lng }
+      const marker = new window.google.maps.Marker({
+        position,
+        label: {
+          text: `$${home.price}`,
+          className: `marker home-${home.id}`,
+        },
+        icon: 'https://maps.gstatic.com/mapfiles/transparent.png',
+        clickable: false,
+      })
+      marker.setMap(map)
+      bounds.extend(position)
+    })
+
+    map.fitBounds(bounds)
   }
 
+  // each makeAutoComplete called before isLoaded is added to the waiting array; after isLoaded, make the auto complete
   function makeAutoComplete(input) {
     if (!isLoaded) {
       waiting.push({
@@ -61,14 +98,14 @@ export default function (context, inject) {
       })
       return
     }
-    
+
     const autoComplete = new window.google.maps.places.Autocomplete(input, {
       types: ['(cities)'],
     })
 
-    autoComplete.addListener("place_changed", () => {
+    autoComplete.addListener('place_changed', () => {
       const place = autoComplete.getPlace()
-      input.dispatchEvent(new CustomEvent("changed", { detail: place }))
+      input.dispatchEvent(new CustomEvent('changed', { detail: place }))
     })
   }
 }
