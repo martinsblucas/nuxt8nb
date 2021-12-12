@@ -1,12 +1,12 @@
 export default function (context, inject) {
-  if (!process.env.ALGOLIA_APPLICATION_ID)
+  if (!context.$config.ALGOLIA_APPLICATION_ID)
     console.error('[Data Api Plugin] Application ID is not configured')
-  else if (!process.env.ALGOLIA_API_KEY)
+  else if (!context.$config.ALGOLIA_API_KEY)
     console.error('[Data Api Plugin] Api Key is not configured')
 
   const headers = {
-    'X-Algolia-API-Key': process.env.ALGOLIA_API_KEY,
-    'X-Algolia-Application-Id': process.env.ALGOLIA_APPLICATION_ID,
+    'X-Algolia-API-Key': context.$config.ALGOLIA_API_KEY,
+    'X-Algolia-Application-Id': context.$config.ALGOLIA_APPLICATION_ID,
   }
 
   inject('dataApi', {
@@ -20,7 +20,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${process.env.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/homes/${homeId}`,
+          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/homes/${homeId}`,
           { headers }
         )
       )
@@ -33,7 +33,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${process.env.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/reviews/query`,
+          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/reviews/query`,
           {
             headers,
             method: 'POST',
@@ -53,7 +53,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${process.env.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/homes/query`,
+          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/homes/query`,
           {
             headers,
             method: 'POST',
@@ -74,7 +74,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${process.env.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/users/query`,
+          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/users/query`,
           {
             headers,
             method: 'POST',

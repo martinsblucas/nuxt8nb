@@ -3,6 +3,8 @@
     <div class="app-search-results">
       <div class="app-search-results-listing">
         <h2 class="app-title">Stays in {{ label }}</h2>
+
+        <template v-if="homes.length">
         <nuxt-link
           v-for="home in homes"
           :key="home.objectID"
@@ -14,6 +16,11 @@
             @mouseout.native="hightlightMarker(home.objectID, false)"
           />
         </nuxt-link>
+        </template>
+
+        <template v-else>
+          No results
+        </template>
       </div>
 
       <div class="app-search-results-map">

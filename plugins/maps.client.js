@@ -1,5 +1,5 @@
 export default function (context, inject) {
-  if (!process.env.MAPS_API_KEY)
+  if (!context.$config.MAPS_API_KEY)
     console.error('[Maps plugin] API Key is not configured')
 
   let isLoaded = false
@@ -15,7 +15,7 @@ export default function (context, inject) {
   // adds Google Maps library to script tag and set the callback as initGoogleMaps
   function addScript() {
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.MAPS_API_KEY}&libraries=places&callback=initGoogleMaps`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${context.$config.MAPS_API_KEY}&libraries=places&callback=initGoogleMaps`
     script.async = true
     window.initGoogleMaps = initGoogleMaps
     document.head.appendChild(script)
