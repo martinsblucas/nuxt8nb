@@ -1,26 +1,28 @@
-export default function (context, inject) {
-  if (!context.$config.ALGOLIA_APPLICATION_ID)
+import { unwrap, getErrorResponse } from '~/utils/fetchUtils'
+
+export default function ({ $config }, inject) {
+  if (!$config.algolia.applicationId)
     console.error('[Data Api Plugin] Application ID is not configured')
-  else if (!context.$config.ALGOLIA_API_KEY)
+  else if (!$config.algolia.apiKey)
     console.error('[Data Api Plugin] Api Key is not configured')
 
   const headers = {
-    'X-Algolia-API-Key': context.$config.ALGOLIA_API_KEY,
-    'X-Algolia-Application-Id': context.$config.ALGOLIA_APPLICATION_ID,
+    'X-Algolia-API-Key': $config.algolia.apiKey,
+    'X-Algolia-Application-Id': $config.algolia.applicationId,
   }
 
   inject('dataApi', {
     getHome,
     getReviewsByHomeId,
     getUserByHomeId,
-    getHomesByLocation
+    getHomesByLocation,
   })
 
   async function getHome(homeId) {
     try {
       return unwrap(
         await fetch(
-          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/homes/${homeId}`,
+          `https://${$config.algolia.applicationId}.algolia.net/1/indexes/homes/${homeId}`,
           { headers }
         )
       )
@@ -33,7 +35,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/reviews/query`,
+          `https://${$config.algolia.applicationId}.algolia.net/1/indexes/reviews/query`,
           {
             headers,
             method: 'POST',
@@ -53,7 +55,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/homes/query`,
+          `https://${$config.algolia.applicationId}.algolia.net/1/indexes/homes/query`,
           {
             headers,
             method: 'POST',
@@ -74,7 +76,7 @@ export default function (context, inject) {
     try {
       return unwrap(
         await fetch(
-          `https://${context.$config.ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/users/query`,
+          `https://${$config.algolia.applicationId}.algolia.net/1/indexes/users/query`,
           {
             headers,
             method: 'POST',
@@ -86,26 +88,6 @@ export default function (context, inject) {
       )
     } catch (error) {
       return getErrorResponse(error)
-    }
-  }
-
-  async function unwrap(response) {
-    const json = await response.json()
-    const { ok, status, statusText } = response
-    return {
-      json,
-      ok,
-      status,
-      statusText,
-    }
-  }
-
-  function getErrorResponse(error) {
-    return {
-      json: {},
-      ok: false,
-      status: 500,
-      statusText: error.message,
     }
   }
 }

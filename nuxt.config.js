@@ -15,9 +15,14 @@ export default {
   router: {
     prefetchLinks: false,
   },
-  plugins: ['~/plugins/maps.client', '~/plugins/dataApi'],
+
+  plugins: [
+    '~/plugins/maps.client',
+    '~/plugins/dataApi',
+    '~/plugins/auth.client',
+  ],
   buildModules: ['@nuxtjs/tailwindcss'],
-  modules: ['@nuxtjs/dotenv'],
+  modules: ['@nuxtjs/dotenv', '~/modules/auth', '~/modules/algolia'],
   css: ['~/assets/sass/app.scss'],
   build: {
     extractCSS: true,
@@ -25,10 +30,26 @@ export default {
       limit: 0,
     },
   },
+
   publicRuntimeConfig: {
-    MAPS_API_KEY: process.env.MAPS_API_KEY,
-    ALGOLIA_APPLICATION_ID: process.env.ALGOLIA_APPLICATION_ID,
-    ALGOLIA_API_KEY: process.env.ALGOLIA_API_KEY,
+    maps: {
+      apiKey: process.env.MAPS_API_KEY,
+    },
+
+    algolia: {
+      applicationId: process.env.ALGOLIA_APPLICATION_ID,
+      apiKey: process.env.ALGOLIA_API_KEY,
+    },
+
+    auth: {
+      cookieName: 'idToken',
+      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
+    },
   },
-  privateRuntimeConfig: {},
+  privateRuntimeConfig: {
+    algolia: {
+      applicationId: process.env.ALGOLIA_APPLICATION_ID,
+      apiKey: process.env.ALGOLIA_PRIVATE_API_KEY,
+    },
+  },
 }

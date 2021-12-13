@@ -2,7 +2,7 @@
   <div class="app">
     <header class="app-header">
       <div class="app-logo">
-        <img src="/images/logo.svg" alt="NuxtBnB">
+        <img src="/images/logo.svg" alt="NuxtBnB" />
       </div>
 
       <div class="app-search">
@@ -10,14 +10,18 @@
         <input type="text" class="datepicker" placeholder="Check in" />
         <input type="text" class="datepicker" placeholder="Check out" />
         <button>
-          <img src="/images/icons/search.svg" alt="Search">
+          <img src="/images/icons/search.svg" alt="Search" />
         </button>
       </div>
 
       <div class="app-user-menu">
-        <img src="/images/icons/house.svg" alt="House">
-        <div class="name">Host</div>
-        <img src="/images/user.jpg" class="avatar" alt="User">
+        <template v-if="isLoggedIn">
+          <img src="/images/icons/house.svg" alt="House" />
+          <div class="name">Host</div>
+          <img :src="user.profileUrl" alt="House" class="avatar" />
+        </template>
+        
+        <div id="googleButton" v-show="!isLoggedIn" class="ml-8"></div>
       </div>
     </header>
     <nuxt />
@@ -28,6 +32,16 @@
 export default {
   mounted() {
     this.$maps.makeAutoComplete(this.$refs.citySearch);
+  },
+
+  computed: {
+    user() {
+      return this.$store.state.auth.user;
+    },
+
+    isLoggedIn() {
+      return this.$store.state.auth.isLoggedIn;
+    },
   },
 
   methods: {
