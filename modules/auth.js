@@ -37,6 +37,7 @@ export default function () {
       return ticket.getPayload()
     } catch (error) {
       console.error(error)
+      return null
     }
   }
 

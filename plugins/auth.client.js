@@ -2,8 +2,8 @@ import Cookie from 'js-cookie'
 import { unwrap } from '~/utils/fetchUtils'
 
 export default ({ $config, store }, inject) => {
-  window.initAuth = init
   addScript()
+  addOnloadListener()
 
   inject('auth', {
     signOut,
@@ -11,34 +11,31 @@ export default ({ $config, store }, inject) => {
 
   function addScript() {
     const script = document.createElement('script')
-    script.src = 'https://apis.google.com/js/platform.js?onload=initAuth'
+    script.src = 'https://accounts.google.com/gsi/client'
     script.async = true
     document.head.appendChild(script)
   }
 
-  function init() {
-    window.gapi.load('auth2', async function () {
-      const auth2 = await window.gapi.auth2.init({
+  function addOnloadListener() {
+    window.onload = function () {
+      window.google.accounts.id.initialize({
         client_id: $config.auth.clientId,
+        callback: parseUser,
       })
 
-      auth2.currentUser.listen(parseUser)
-    })
-
-    window.gapi.signin2.render('googleButton', {
-      onSuccess: parseUser,
-    })
+      const googleButton = document.getElementById('googleButton')
+      window.google.accounts.id.renderButton(googleButton, {})
+    }
   }
 
-  async function parseUser(user) {
-    if (!user.isSignedIn()) {
+  async function parseUser(response) {
+    if (!response) {
       Cookie.remove($config.auth.cookieName)
       store.commit('auth/user', null)
       return
     }
 
-    const idToken = user.getAuthResponse().id_token
-    Cookie.set($config.auth.cookieName, idToken, {
+    Cookie.set($config.auth.cookieName, response.credential, {
       expires: 1 / 24,
       sameSite: 'Lax',
     })
@@ -57,7 +54,8 @@ export default ({ $config, store }, inject) => {
   }
 
   function signOut() {
-    const auth2 = window.gapi.auth2.getAuthInstance()
-    auth2.signOut()
+    window.google.accounts.id.disableAutoSelect()
+    Cookie.remove($config.auth.cookieName)
+    store.commit('auth/user', null)
   }
 }

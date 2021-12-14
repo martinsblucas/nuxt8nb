@@ -21,7 +21,7 @@
           <img :src="user.profileUrl" alt="House" class="avatar" />
         </template>
         
-        <div id="googleButton" v-show="!isLoggedIn" class="ml-8"></div>
+        <div id="googleButton" v-show="!isLoggedIn" class="ml-8" data-type="standard"></div>
       </div>
     </header>
     <nuxt />
