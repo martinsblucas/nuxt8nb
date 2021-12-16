@@ -16,8 +16,15 @@ export default ({ $config, store }, inject) => {
     document.head.appendChild(script)
   }
 
-  function addOnloadListener() {
-    window.onload = function () {
+  async function addOnloadListener() {
+    const token = Cookie.get($config.auth.cookieName)
+    if (token) {
+      const user = await getCurrentUser()
+      if (user) store.commit('auth/user', user)
+      else store.commit('auth/user', null)
+    }
+
+    window.onload = async function () {
       window.google.accounts.id.initialize({
         client_id: $config.auth.clientId,
         callback: parseUser,
@@ -40,16 +47,23 @@ export default ({ $config, store }, inject) => {
       sameSite: 'Lax',
     })
 
+    const user = await getCurrentUser()
+    if (user) store.commit('auth/user', user)
+    else store.commit('auth/user', null)
+  }
+
+  async function getCurrentUser() {
     try {
       const response = await unwrap(await fetch('/api/user'))
       const user = response.json
 
-      store.commit('auth/user', {
-        fullName: user.json,
+      return {
+        fullName: user.name,
         profileUrl: user.image,
-      })
+      }
     } catch (error) {
       console.error(error)
+      return null
     }
   }
 
