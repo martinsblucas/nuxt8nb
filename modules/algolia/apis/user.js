@@ -5,7 +5,7 @@ import { getHeaders } from '../helpers'
 export default (algoliaConfig) => {
   const headers = getHeaders(algoliaConfig)
   return {
-    findOrCreate: async (identity, payload) => {
+    create: async (identity, payload) => {
       try {
         return unwrap(
           await fetch(
@@ -15,6 +15,19 @@ export default (algoliaConfig) => {
               method: 'PUT',
               body: JSON.stringify(payload),
             }
+          )
+        )
+      } catch (error) {
+        return getErrorResponse(error)
+      }
+    },
+
+    getById: async (identity) => {
+      try {
+        return unwrap(
+          await fetch(
+            `https://${algoliaConfig.applicationId}.algolia.net/1/indexes/users/${identity.id}`,
+            { headers }
           )
         )
       } catch (error) {

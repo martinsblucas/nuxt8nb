@@ -2,8 +2,16 @@ import { sendJSON } from '../helpers'
 
 export default (apis) => {
   return async function getUserRoute(req, res, next) {
-    const payload = makeUserPayload(req.identity)
-    await apis.user.findOrCreate(req.identity, payload)
+    const { identity } = req
+    const userData = await apis.user.getById(identity)
+
+    if (userData.status == 200) {
+      sendJSON(userData.json, res)
+      return
+    }
+
+    const payload = makeUserPayload(identity)
+    await apis.user.findOrCreate(identity, payload)
     sendJSON(payload, res)
   }
 

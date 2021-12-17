@@ -29,9 +29,10 @@ export default {
     const responses = await Promise.all([
       $dataApi.getHome(params.id),
       $dataApi.getReviewsByHomeId(params.id),
-      await $dataApi.getUserByHomeId(params.id),
+      $dataApi.getUserByHomeId(params.id),
     ]);
     const badResponse = responses.find((response) => !response.ok);
+
     if (badResponse)
       return error({
         statusCode: badResponse.status,

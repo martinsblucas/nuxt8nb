@@ -71,5 +71,8 @@ export default ({ $config, store }, inject) => {
     window.google.accounts.id.disableAutoSelect()
     Cookie.remove($config.auth.cookieName)
     store.commit('auth/user', null)
+
+    const googleButton = document.getElementById('googleButton')
+    window.google.accounts.id.renderButton(googleButton, {})
   }
 }
