@@ -5,7 +5,20 @@ import { getHeaders } from '../helpers'
 export default (algoliaConfig) => {
   const headers = getHeaders(algoliaConfig)
   return {
-    create: async (identity, payload) => {
+    assignHome: async function (identity, homeId) {
+      const payload = (await this.getById(identity)).json
+      payload.homeId.push(homeId)
+      return this.create(identity, payload)
+    },
+
+    removeHome: async function (identity, homeId) {
+      const payload = (await this.getById(identity)).json
+      const homes = payload.homeId.filter(id => id != homeId)
+      payload.homeId = homes
+      return this.create(identity, payload)
+    },
+
+    create: async function (identity, payload) {
       try {
         return unwrap(
           await fetch(
@@ -22,7 +35,7 @@ export default (algoliaConfig) => {
       }
     },
 
-    getById: async (identity) => {
+    getById: async function (identity) {
       try {
         return unwrap(
           await fetch(
