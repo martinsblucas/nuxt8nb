@@ -5,7 +5,6 @@ export default (apis) => {
   return async (req, res) => {
     if (req.method === 'DELETE') {
       const homeId = req.url.replace(/\//g, '')
-      console.log(homeId)
       return await deleteHome(req.identity.id, homeId, res)
     }
 
@@ -24,7 +23,6 @@ export default (apis) => {
 
   async function getHomesByUser(userId, res) {
     const payload = (await apis.homes.getByUserId(userId)).json.hits
-    console.log(payload)
     sendJSON(payload, res)
   }
 

@@ -47,6 +47,8 @@ export default {
       label: to.query.label,
       lat: to.query.lat,
       lng: to.query.lng,
+      start: to.query.start,
+      end: to.query.end,
     };
     const data = await this.$dataApi.getHomesByLocation(location);
     this.label = location.label;

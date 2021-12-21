@@ -20,6 +20,7 @@ export default {
     '~/plugins/maps.client',
     '~/plugins/dataApi',
     '~/plugins/auth.client',
+    '~/plugins/vCalendar.client',
   ],
   buildModules: ['@nuxtjs/tailwindcss', '@nuxt/image'],
   modules: [

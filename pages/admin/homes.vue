@@ -66,6 +66,21 @@
       Country:
       <input type="text" v-model="home.location.country" class="w-26" /><br />
 
+      <date-picker
+        v-for="(range, index) in home.availabilityRanges"
+        :key="index"
+        v-model="home.availabilityRanges[index]"
+        is-range
+        timezone="UTC"
+        :modelConfig="{ timeAdjust: '00:00:00' }"
+      >
+        <template v-slot="{ inputValue, inputEvents }">
+          <input :value="inputValue.start" v-on="inputEvents.start" />
+          to
+          <input :value="inputValue.end" v-on="inputEvents.end" /><br />
+        </template>
+      </date-picker>
+
       <button class="border px-4 py-2 border-gray-400">Add</button>
     </form>
   </div>
@@ -100,6 +115,10 @@ export default {
           lng: "",
         },
         images: [],
+        availabilityRanges: [
+          { start: "", end: "" },
+          { start: "", end: "" },
+        ],
       },
     };
   },
@@ -160,6 +179,8 @@ export default {
       parts.find((part) => part.types.includes(type)),
 
     async onSubmit() {
+      console.log(JSON.stringify(this.home));
+      console.log(this.home);
       const response = await unwrap(
         await fetch("/api/homes", {
           method: "POST",
@@ -172,8 +193,8 @@ export default {
 
       this.homeList.push({
         title: this.home.title,
-        objectID: response.json.homeId
-      })
+        objectID: response.json.homeId,
+      });
     },
   },
 };

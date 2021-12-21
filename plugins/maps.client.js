@@ -1,3 +1,4 @@
+
 export default function ({$config}, inject) {
   if (!$config.maps.apiKey)
     console.error('[Maps plugin] API Key is not configured')

@@ -30,10 +30,6 @@ export default {
     return {
       homes: (await $dataApi.getHomes()).json.hits
     }
-  },
-
-  mounted() {
-    console.log(this.homes)
   }
 };
 </script>

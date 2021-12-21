@@ -7,6 +7,18 @@ export default (algoliaConfig) => {
   return {
     create: async (homeId, payload) => {
       try {
+        const availability = []
+        payload.availabilityRanges.forEach(range => {
+          const start = new Date(range.start).getTime() / 1000
+          const end = new Date(range.end).getTime() / 1000
+          for(let day = start; day <= end; day += 86400) {
+            availability.push(day)
+          }
+        })
+
+        delete payload.availabilityRanges
+        payload.availability = availability
+
         return unwrap(
           await fetch(
             `https://${algoliaConfig.applicationId}.algolia.net/1/indexes/homes/${homeId}`,
