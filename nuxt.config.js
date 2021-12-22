@@ -20,6 +20,7 @@ export default {
     '~/plugins/maps.client',
     '~/plugins/dataApi',
     '~/plugins/auth.client',
+    '~/plugins/stripe.client',
     '~/plugins/vCalendar.client',
   ],
   buildModules: ['@nuxtjs/tailwindcss', '@nuxt/image'],
@@ -28,7 +29,8 @@ export default {
     '~/modules/auth',
     '~/modules/algolia',
     '~/modules/cloudinary',
-    '@nuxtjs/cloudinary'
+    '~/modules/stripe',
+    '@nuxtjs/cloudinary',
   ],
   css: ['~/assets/sass/app.scss'],
   build: {
@@ -40,13 +42,13 @@ export default {
 
   cloudinary: {
     cloudName: process.env.CLODINARY_NAME,
-    apiKey: process.env.CLODINARY_API_KEY
+    apiKey: process.env.CLODINARY_API_KEY,
   },
 
   image: {
     cloudinary: {
-      baseURL: `https://res.cloudinary.com/${process.env.CLODINARY_NAME}/image/upload/`
-    }
+      baseURL: `https://res.cloudinary.com/${process.env.CLODINARY_NAME}/image/upload/`,
+    },
   },
 
   publicRuntimeConfig: {
@@ -65,8 +67,12 @@ export default {
     },
 
     cloudinary: {
-      apiKey: process.env.CLODINARY_API_KEY
-    }
+      apiKey: process.env.CLODINARY_API_KEY,
+    },
+
+    stripe: {
+      key: process.env.STRIPE_KEY,
+    },
   },
 
   privateRuntimeConfig: {
@@ -77,6 +83,10 @@ export default {
 
     cloudinary: {
       apiSecret: process.env.CLODINARY_API_SECRET,
+    },
+
+    stripe: {
+      secretKey: process.env.STRIPE_SECRET_KEY,
     },
   },
 }

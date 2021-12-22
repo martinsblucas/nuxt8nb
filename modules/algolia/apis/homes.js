@@ -5,13 +5,26 @@ import { getHeaders } from '../helpers'
 export default (algoliaConfig) => {
   const headers = getHeaders(algoliaConfig)
   return {
+    get: async (homeId) => {
+      try {
+        return unwrap(
+          await fetch(
+            `https://${algoliaConfig.applicationId}.algolia.net/1/indexes/homes/${homeId}`,
+            { headers }
+          )
+        )
+      } catch (error) {
+        return getErrorResponse(error)
+      }
+    },
+
     create: async (homeId, payload) => {
       try {
         const availability = []
-        payload.availabilityRanges.forEach(range => {
+        payload.availabilityRanges.forEach((range) => {
           const start = new Date(range.start).getTime() / 1000
           const end = new Date(range.end).getTime() / 1000
-          for(let day = start; day <= end; day += 86400) {
+          for (let day = start; day <= end; day += 86400) {
             availability.push(day)
           }
         })
