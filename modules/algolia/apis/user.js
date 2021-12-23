@@ -11,9 +11,26 @@ export default (algoliaConfig) => {
       return this.create(identity, payload)
     },
 
+    bookHome: async function (identityId, homeId, start, end) {
+      try {
+        return unwrap(
+          await fetch(
+            `https://${algoliaConfig.applicationId}.algolia.net/1/indexes/bookings`,
+            {
+              headers,
+              method: 'POST',
+              body: JSON.stringify({ identityId, homeId, start, end }),
+            }
+          )
+        )
+      } catch (error) {
+        return getErrorResponse(error)
+      }
+    },
+
     removeHome: async function (identity, homeId) {
       const payload = (await this.getById(identity)).json
-      const homes = payload.homeId.filter(id => id != homeId)
+      const homes = payload.homeId.filter((id) => id != homeId)
       payload.homeId = homes
       return this.create(identity, payload)
     },
